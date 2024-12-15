@@ -22,6 +22,7 @@ A comprehensive backend application for a library management system built with N
 - Mongoose
 - JSON Web Token (JWT)
 - Bcrypt
+- Dotenv (Environment Configuration)
 
 ## Prerequisites
 
@@ -43,23 +44,46 @@ npm install
 ```
 
 3. Set up environment variables
-   - Create a `.env` file in the root directory
-   - Add your MongoDB connection string
-   - Add your JWT secret key
+```bash
+# Install dotenv
+npm install dotenv
+```
 
 ## Configuration
 
-### MongoDB Connection
-Update the MongoDB connection string in the code:
+### Environment Variables
+
+Create a `.env` file in the project root with the following variables:
+```
+MONGO_URL= <your_mongo_url>
+JWT_SECRET= <your_very_secret_key>
+```
+
+### Applying Environment Variables
+
+In your main application file:
 ```javascript
-mongoose.connect('mongodb+srv://kushalrdev:kushalr.dev@cluster0.hko96.mongodb.net/library-backend', {
+require('dotenv').config(); // Load environment variables
+
+// Use environment variables
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+// JWT secret from environment
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
+};
 ```
 
-### JWT Secret
-Replace `'secretKey'` with a strong, unique secret key in the `generateToken` function.
+### .gitignore
+
+Ensure to add `.env` to your `.gitignore` file:
+```
+node_modules/
+.env
+```
 
 ## API Endpoints
 
@@ -97,8 +121,15 @@ npm start
 
 The server will run on `http://localhost:3000`
 
+## Environment Variable Security
+
+- Never commit `.env` files to version control
+- Use `.env.example` with placeholder values for other developers
+- Keep sensitive information like database credentials and secret keys confidential
+
 ## Security Features
 
+- Environment-based configuration
 - Password hashing with bcrypt
 - JWT-based authentication
 - Role-based access control
@@ -118,6 +149,6 @@ The API returns appropriate HTTP status codes and error messages for various sce
 - Implement refresh tokens
 - Add rate limiting
 - Create more detailed error responses
-- Add logging
-
+- Implement proper environment-specific configurations
+- Add logging mechanisms
 

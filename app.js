@@ -44,7 +44,7 @@ const Book = mongoose.model('Book', bookSchema);
 
 // Utility functions
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, 'secretKey', { expiresIn: '15d' });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 };
 
 // Middleware for authentication
@@ -53,7 +53,7 @@ const authenticate = (req, res, next) => {
   if (!token) return res.status(401).send('Access Denied');
 
   try {
-    const verified = jwt.verify(token, 'secretKey');
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
     next();
   } catch (error) {
